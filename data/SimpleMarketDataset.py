@@ -4,9 +4,9 @@ import pandas as pd
 import numpy as np
 
 class SimpleMarketDataset(Dataset):
-    def __init__(self, csv_file):
+    def __init__(self, pkl_file):
         super().__init__()
-        self.data = pd.read_csv(csv_file)
+        self.data = pd.read_pickle(pkl_file)
         cols = [col for col in self.data.columns if not col.find('Unnamed')]
         self.data = self.data.drop(cols, axis=1)
         self.target = self.data['target'].values
@@ -20,4 +20,3 @@ class SimpleMarketDataset(Dataset):
          return: torch.tensor([features, target])
         """
         return torch.tensor(self.features[index]).float(), torch.tensor(self.target[index]).float()
-

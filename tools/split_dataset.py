@@ -6,28 +6,27 @@ def split_dataset(args):
     """
     Split full dataset into val and train
         args:
-            args.path_to_csv:  Path to full dataset csv
-            args.output_dir: Output dir for val.csv and train.csv
-            args. 
+            args.path_to_csv:  Path to full dataset pkl
+            args.output_dir: Output dir for val.pkl and train.pkl
     """
-    data = pd.read_csv(args.path_to_csv)
+    data = pd.read_pickle(args.path_to_pkl)
     train = data[0:int(len(data)*args.valid_percent)]
     val = data[int(len(data)*args.valid_percent):]
-    train.to_csv(os.path.join(args.output_dir, 'train.csv'))
-    val.to_csv(os.path.join(args.output_dir, 'val.csv'))
+    train.to_pickle(os.path.join(args.output_dir, 'train.pkl'))
+    val.to_pickle(os.path.join(args.output_dir, 'val.pkl'))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--path_to_csv', 
+        '--path_to_pkl', 
         type=str,
-        default='/home/ivainn/Alex/kaggle/kaggle_input/train.csv',
-        help='Path to train.csv')
+        default='/home/ivainn/Alex/kaggle/kaggle_input/prepared_train.pkl',
+        help='Path to train.pkl')
     parser.add_argument(
         '--output_dir',
         type=str,
         default='/home/ivainn/Alex/kaggle/data',
-        help='Path to output dir for val.csv and train.csv'
+        help='Path to output dir for val.pkl and train.pkl'
     )
     parser.add_argument(
         '--valid_percent',
