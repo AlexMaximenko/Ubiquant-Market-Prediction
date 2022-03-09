@@ -1,0 +1,5 @@
+datatable==1.0.0
+numpy==1.22.2
+pandas==1.4.1
+pytorch_lightning==1.5.10
+torch==1.10.2
