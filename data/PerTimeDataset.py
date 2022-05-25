@@ -26,8 +26,8 @@ class PerTimeDataset(Dataset):
         temp_data = self.data[self.data['time_id'] == self.time_ids[index]]
         features = torch.tensor(temp_data[self.feature_cols].values).float()
         target = torch.tensor(temp_data['target'].values).float()
-        time_ids = torch.tensor(temp_data['time_id'].values)
-        investment_ids = torch.tensor(temp_data['investment_id'].values)
+        time_ids = torch.tensor(temp_data['time_id'].astype(int).values)
+        investment_ids = torch.tensor(temp_data['investment_id'].astype(int).values)
 
         return {
             'features': features, 

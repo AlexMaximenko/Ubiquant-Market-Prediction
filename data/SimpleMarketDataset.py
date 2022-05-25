@@ -10,7 +10,8 @@ class SimpleMarketDataset(Dataset):
         cols = [col for col in self.data.columns if not col.find('Unnamed')]
         self.data = self.data.drop(cols, axis=1)
         self.target = self.data['target'].values
-        self.features = self.data.drop(['row_id', 'target', 'investment_id'], 1).values
+        self.features = self.data.drop(['row_id', 'target', 'investment_id', 'time_id'], 1).values
+        self.investment_id = self.data['investment_id'].astype(int).values
 
     def __len__(self):
         return len(self.data)
@@ -19,4 +20,8 @@ class SimpleMarketDataset(Dataset):
         """
          return: torch.tensor([features, target])
         """
-        return torch.tensor(self.features[index]).float(), torch.tensor(self.target[index]).float()
+        return {
+            'features': torch.tensor(self.features[index]).float(), 
+            'investment_ids': torch.tensor(self.investment_id[index]),
+            'targets': torch.tensor(self.target[index]).float()
+            }

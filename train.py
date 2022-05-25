@@ -4,6 +4,7 @@ from data.SimpleMarketDataset import SimpleMarketDataset
 from data.PerTimeDataset import PerTimeDataset
 from models.SimpleNet import LightningSimpleNet
 from models.MemoryNet import LightningMemoryNet
+from tools.validate import validate
 from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
 from pytorch_lightning.plugins import DDPPlugin
@@ -34,6 +35,9 @@ def train_memory_model(args):
         trainer = Trainer(max_epochs=args.epochs_num, accelerator='cpu', logger=logger)
     trainer.fit(model, train_loader, val_loader)
 
+    if args.need_testing:
+        print('TESTING RESULT = ', validate(model))
+
 def train_simple_model(args):
     GPU_NUM = args.gpus
     BATCH_SIZE = args.batch_size
@@ -55,6 +59,8 @@ def train_simple_model(args):
         trainer = Trainer(max_epochs=args.epochs_num, accelerator='cpu', logger=logger)
     trainer.fit(model, train_loader, val_loader)
 
+    if args.need_testing:
+        print('TESTING RESULT = ', validate(model))
 
 def train(args):
     if args.model_type == 'memory_model':
@@ -65,13 +71,14 @@ def train(args):
 
 def configure_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train_data_path',  type=str, default='/home/ivainn/Alex/kaggle/data/train.pkl', required=False, help='Train data in pkl format')
-    parser.add_argument('--val_data_path',  type=str, default='/home/ivainn/Alex/kaggle/data/val.pkl', required=False, help='Val data in pkl format')
+    parser.add_argument('--train_data_path',  type=str, default='/home/ubuntu/data/ubiquant/ubiquant_train.pickle', required=False, help='Train data in pkl format')
+    parser.add_argument('--val_data_path',  type=str, default='/home/ubuntu/data/ubiquant/ubiquant_val.pickle', required=False, help='Val data in pkl format')
     parser.add_argument('--gpus', type=int, default=2, required=False, help='Gpu num for training')
     parser.add_argument('--batch_size', type=int, default=2**14, required=False, help='Batch size for training')
     parser.add_argument('--model_type', type=str, default='memory_model', required=False, help='Model for training: memory_model or simple_model')
     parser.add_argument('--tb_logs_dir', type=str, default='/home/ivainn/Alex/Ubiquant-Market-Prediction/tb-logs', required=False, help='Directory for tensorboard logs')
     parser.add_argument('--epochs_num', type=int, default=10, required=False, help='Num of training epochs')
+    parser.add_argument('--need_testing', type=int, default=0, required=False, help='Whether need to test model')
     return parser
 
 if __name__ == "__main__":

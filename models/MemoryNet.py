@@ -25,8 +25,8 @@ class LightningMemoryNet(LightningModule):
         self.hidden_size = hidden_size
         self.features_num = features_num
 
-        self.register_buffer("init_hidden_state", torch.autograd.Variable(torch.zeros([1, self.hidden_size]), requires_grad=True))
-        self.register_buffer("init_cell_state", torch.autograd.Variable(torch.zeros([1, self.hidden_size]), requires_grad=True))
+        self.register_parameter("init_hidden_state", torch.nn.Parameter(torch.zeros([1, self.hidden_size]), requires_grad=True))
+        self.register_parameter("init_cell_state", torch.nn.Parameter(torch.zeros([1, self.hidden_size]), requires_grad=True))
         
         #self.init_hidden_state = torch.autograd.Variable(torch.zeros([1, self.hidden_size]), requires_grad=True)
         #self.init_cell_state = torch.autograd.Variable(torch.zeros([1, self.hidden_size]), requires_grad=True)
@@ -79,6 +79,10 @@ class LightningMemoryNet(LightningModule):
         y = batch['target'].squeeze()
         loss = F.mse_loss(torch.squeeze(self.forward(x)), y)
         self.log("val_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+
+    def predict_step(self, batch, batch_idx, dataloader_idx=None):
+        x = [batch['features'], batch['investment_id']]
+        return self.forward(x)
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
